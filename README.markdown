@@ -2,6 +2,14 @@
 
 A simple plugin for creating URL-friendly permalinks (slugs) from attributes.
 
+
+## Dependencies
+
+Uses the the [`unicode` library](http://www.yoshidam.net/Ruby.html) (`gem install unicode`) to get around [platform inconsistencies](http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/243426) with `iconv`.
+
+
+## Usage
+
     class Article < ActiveRecord::Base
       has_permalink :title
     end
@@ -34,6 +42,11 @@ Use the `:if` or `:unless` options to specify a Proc, method, or string to be ca
 
 You can use `PermalinkFu.escape` to escape a string manually.
 
-If you're having issues with Iconv, you can manually tweak `PermalinkFu.translation_to` `PermalinkFu.translation_from`.  These are set to `nil` if Iconv is not loaded.  You can also manually set them to `nil` if you don't want to use iconv.
 
-Originally extracted from [Mephisto](http://mephistoblog.com).
+## Credits
+
+Originally extracted from [Mephisto](http://mephistoblog.com) by [technoweenie](http://github.com/technoweenie/permalink_fu/).
+
+Conditions added by [Pat Nakajima](http://github.com/nakajima/permalink_fu/).
+
+[Henrik Nyh](http://github.com/technoweenie/permalink_fu/) made minor fixes and swapped `iconv` for the [slugalizer](http://github.com/henrik/slugalizer) library, originally by [Christoffer Sawicki](http://termos.vemod.net).

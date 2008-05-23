@@ -1,23 +1,9 @@
-begin
-  require 'iconv'
-rescue Object
-  puts "no iconv, you might want to look into it."
-end
+$LOAD_PATH << "#{File.dirname(__FILE__)}/../vendor"
+require 'slugalizer'
 
-require 'digest/sha1'
 module PermalinkFu
-  class << self
-    attr_accessor :translation_to
-    attr_accessor :translation_from
-    
-    def escape(str)
-      s = ((translation_to && translation_from) ? Iconv.iconv(translation_to, translation_from, str) : str).to_s
-      s.gsub!(/[^\w -]+/, '') # strip unwanted characters
-      s.strip!            # ohh la la
-      s.downcase!         #
-      s.gsub!(/[ -]+/, '-') # separate by single dashes
-      s
-    end
+  def self.escape(str)
+    Slugalizer.slugalize(str)
   end
   
   def self.included(base)
@@ -115,9 +101,4 @@ private
       method.call(self)
     end
   end
-end
-
-if Object.const_defined?(:Iconv)
-  PermalinkFu.translation_to   = 'ascii//translit//IGNORE'
-  PermalinkFu.translation_from = 'utf-8'
 end
