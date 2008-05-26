@@ -43,6 +43,25 @@ module PermalinkFu
       self.permalink_options    = options
       before_validation :create_unique_permalink
       evaluate_attribute_method permalink_field, "def #{self.permalink_field}=(new_value);write_attribute(:#{self.permalink_field}, PermalinkFu.escape(new_value));end", "#{self.permalink_field}="
+      extend  PermalinkFinders
+      include ToParam if options[:param]
+    end
+  end
+  
+  module ToParam
+    def to_param
+      send(self.class.permalink_field)
+    end
+  end
+  
+  module PermalinkFinders
+    def find_by_permalink(value)
+      find(:first, :conditions => { permalink_field => value  })
+    end
+    
+    def find_by_permalink!(value)
+      find_by_permalink(value) ||
+      raise(ActiveRecord::RecordNotFound, "Couldn't find #{name} with permalink #{value.inspect}")
     end
   end
   

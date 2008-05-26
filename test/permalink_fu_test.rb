@@ -4,6 +4,10 @@ require File.join(File.dirname(__FILE__), '../lib/permalink_fu')
 class FauxColumn < Struct.new(:limit)
 end
 
+class ActiveRecord
+  class RecordNotFound < StandardError; end
+end
+
 class BaseModel
   def self.columns_hash
     @columns_hash ||= {'permalink' => FauxColumn.new(100), 'slug' => FauxColumn.new(100)}
@@ -58,6 +62,10 @@ class BaseModel
   def self.before_validation(method)
     self.validation = method
   end
+  
+  def self.find(*args)
+    nil
+  end
 
   def validate
     send self.class.validation
@@ -66,6 +74,10 @@ class BaseModel
   
   def new_record?
     @id.nil?
+  end
+  
+  def to_param
+    @id
   end
   
   def write_attribute(key, value)
@@ -101,6 +113,10 @@ end
 class AsModel < BaseModel
   attr_reader   :slug
   has_permalink :title, :as => :slug
+end
+
+class OverrideParamModel < BaseModel
+  has_permalink :title, :param => true
 end
 
 class IfProcConditionModel < BaseModel
@@ -228,6 +244,14 @@ class PermalinkFuTest < Test::Unit::TestCase
     assert_not_nil @m.slug
   end
   
+  def test_find_by_permalink
+    assert_nil AsModel.find_by_permalink("permalink")
+  end
+  
+  def test_find_by_permalink!
+    assert_raises(ActiveRecord::RecordNotFound) { AsModel.find_by_permalink!("permalink") }
+  end
+  
   def test_should_abide_by_if_proc_condition
     @m = IfProcConditionModel.new
     @m.title = 'dont make me a permalink'
@@ -269,4 +293,19 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m.validate
     assert_not_nil @m.permalink
   end
+  
+  def test_should_optionally_override_to_param
+    @m = OverrideParamModel.new
+    @m.permalink = 'My Param'
+    @m.validate
+    assert_equal 'my-param', @m.to_param
+  end
+  
+  def test_should_not_override_to_param_by_default
+    @m = MockModel.new
+    @m.permalink = 'My Param'
+    @m.validate
+    assert_not_equal 'my-param', @m.to_param
+  end
+  
 end

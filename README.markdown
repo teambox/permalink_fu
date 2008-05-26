@@ -32,6 +32,21 @@ Permalinks are guaranteed unique: "foo-bar-2", "foo-bar-3" etc are used if there
 
 This means that two articles with the same `blog_id` can not have the same permalink, but two articles with different `blog_id`s can.
 
+Two finders are provided:
+
+    Article.find_by_permalink(params[:id])
+    Article.find_by_permalink!(params[:id])
+    
+These methods keep their name no matter what attribute is used to store the permalink.
+
+The `find_by_permalink` method returns `nil` if there is no match; the `find_by_permalink!` method will raise `ActiveRecord::RecordNotFound`.
+
+You can override the model's `to_param` method with
+
+    has_permalink :title, :param => true
+    
+This means that the permalink will be used instead of the primary key (id) in generated URLs. Remember to change your controller code from e.g. `find` to `find_by_permalink!`.
+
 You can add conditions to `has_permalink` like so:
 
   	class Article < ActiveRecord::Base
