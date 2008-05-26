@@ -18,7 +18,7 @@ This will escape the title in a before_validation callback, turning e.g. "Föö!
 
 The permalink is by default stored in the `permalink` attribute.
 
-    has_permalink :title, :slug
+    has_permalink :title, :as => :slug
   
 will store it in `slug` instead.
 

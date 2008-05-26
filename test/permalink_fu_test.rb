@@ -6,7 +6,7 @@ end
 
 class BaseModel
   def self.columns_hash
-    @columns_hash ||= {'permalink' => FauxColumn.new(100)}
+    @columns_hash ||= {'permalink' => FauxColumn.new(100), 'slug' => FauxColumn.new(100)}
   end
 
   include PermalinkFu
@@ -96,6 +96,11 @@ class ScopedModel < BaseModel
   end
 
   has_permalink :title, :scope => :foo
+end
+
+class AsModel < BaseModel
+  attr_reader   :slug
+  has_permalink :title, :as => :slug
 end
 
 class IfProcConditionModel < BaseModel
@@ -213,6 +218,14 @@ class PermalinkFuTest < Test::Unit::TestCase
     assert_equal 'f-2', @m.validate
   ensure
     MockModel.columns_hash['permalink'].limit = @old
+  end
+  
+  def test_should_use_custom_field
+    @m = AsModel.new
+    @m.title = 'stick this in "slug"'
+    @m.validate
+    assert_nil @m.permalink
+    assert_not_nil @m.slug
   end
   
   def test_should_abide_by_if_proc_condition

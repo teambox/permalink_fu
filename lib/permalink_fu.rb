@@ -28,22 +28,18 @@ module PermalinkFu
     #     has_permalink [:category, :title]
     #   
     #     # stores permalink form of #title to the #category_permalink attribute
-    #     has_permalink [:category, :title], :category_permalink
+    #     has_permalink [:category, :title], :as => :category_permalink
     #
     #     # add a scope
     #     has_permalink :title, :scope => :blog_id
     #
     #     # add a scope and specify the permalink field name
-    #     has_permalink :title, :slug, :scope => :blog_id
+    #     has_permalink :title, :as => :slug, :scope => :blog_id
     #   end
     #
-    def has_permalink(attr_names = [], permalink_field = nil, options = {})
-      if permalink_field.is_a?(Hash)
-        options = permalink_field
-        permalink_field = nil
-      end
+    def has_permalink(attr_names = [], options = {})
       self.permalink_attributes = Array(attr_names)
-      self.permalink_field      = (permalink_field || 'permalink').to_s
+      self.permalink_field      = (options.delete(:as) || 'permalink').to_s
       self.permalink_options    = options
       before_validation :create_unique_permalink
       evaluate_attribute_method permalink_field, "def #{self.permalink_field}=(new_value);write_attribute(:#{self.permalink_field}, PermalinkFu.escape(new_value));end", "#{self.permalink_field}="
