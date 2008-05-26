@@ -2,10 +2,9 @@
 
 A simple plugin for creating URL-friendly permalinks (slugs) from attributes.
 
+Uses the the [`unicode` library](http://www.yoshidam.net/Ruby.html) (`gem install unicode`) if available.
 
-## Dependencies
-
-Uses the the [`unicode` library](http://www.yoshidam.net/Ruby.html) (`gem install unicode`) to get around [platform inconsistencies](http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/243426) with `iconv`.
+Falls back to `iconv` from the Ruby standard library if `unicode` can't be loaded, but note that this library is [inconsistent between platforms](http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/243426).
 
 
 ## Usage
@@ -64,4 +63,4 @@ Originally extracted from [Mephisto](http://mephistoblog.com) by [technoweenie](
 
 Conditions added by [Pat Nakajima](http://github.com/nakajima/permalink_fu/).
 
-[Henrik Nyh](http://github.com/technoweenie/permalink_fu/) made minor fixes and swapped `iconv` for the [slugalizer](http://github.com/henrik/slugalizer) library, originally by [Christoffer Sawicki](http://termos.vemod.net).
+[Henrik Nyh](http://github.com/technoweenie/permalink_fu/) made various fixes, including the addition of the [slugalizer](http://github.com/henrik/slugalizer) library (originally by [Christoffer Sawicki](http://termos.vemod.net)).
