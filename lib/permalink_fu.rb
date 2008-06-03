@@ -1,30 +1,19 @@
-$LOAD_PATH << "#{File.dirname(__FILE__)}/../vendor"
-
 begin
-  require 'slugalizer'
+  require "active_support"
 rescue LoadError
-  
-  message = "Couldn't load 'unicode' library! Falling back to iconv, which has issues: see README!"
-  defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER.warn(message) : STDERR.puts(message)
-  
-  require 'iconv'
-  class Iconv
-    def self.slugalize(string)
-      s = Iconv.iconv('ascii//translit//IGNORE', 'utf-8', string).to_s
-      s.gsub!(/[^\w -]+/, '')  # strip unwanted characters
-      s.strip! # ohh la la
-      s.downcase!
-      s.gsub!(/[ -]+/, '-')  # separate by single dashes
-      s
-    end
-  end
-
+  require "rubygems"
+  require "active_support"
 end
 
 module PermalinkFu
+
   def self.escape(str)
-    object = Object.const_defined?(:Slugalizer) ? Slugalizer : Iconv
-    object.slugalize(str)
+    s = ActiveSupport::Multibyte::Handlers::UTF8Handler.normalize(str.to_s, :kd)
+    s.gsub!(/[^\w -]+/, '')  # strip unwanted characters
+    s.strip! # ohh la la
+    s.downcase!
+    s.gsub!(/[ -]+/, '-')  # separate by single dashes
+    s
   end
   
   def self.included(base)
