@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), '../lib/permalink_fu')
 class FauxColumn < Struct.new(:limit)
 end
 
-class ActiveRecord
+module ActiveRecord
   class RecordNotFound < StandardError; end
 end
 
