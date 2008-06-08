@@ -5,7 +5,8 @@ class FauxColumn < Struct.new(:limit)
 end
 
 module ActiveRecord
-  class RecordNotFound < StandardError; end
+  class ActiveRecordError < StandardError; end
+  class RecordNotFound < ActiveRecordError; end
 end
 
 class BaseModel
