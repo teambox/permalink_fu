@@ -9,7 +9,7 @@ module PermalinkFu
 
   def self.escape(str)
     s = ActiveSupport::Multibyte::Handlers::UTF8Handler.normalize(str.to_s, :kd)
-    s.gsub!(/[^\w -]+/, '')  # strip unwanted characters
+    s.gsub!(/[^\w -]+/n, '')  # strip unwanted characters
     s.strip! # ohh la la
     s.downcase!
     s.gsub!(/[ -]+/, '-')  # separate by single dashes
