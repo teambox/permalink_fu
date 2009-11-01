@@ -62,3 +62,4 @@ Originally extracted from [Mephisto](http://mephistoblog.com) by [technoweenie](
 Conditions added by [Pat Nakajima](http://github.com/nakajima/permalink_fu/).
 
 [Henrik Nyh](http://github.com/technoweenie/permalink_fu/) replaced `iconv` with `ActiveSupport::Multibyte`.
+[Gonçalo Silva](http://goncalossilva.com) fixed ActiveSupport::Multibyte usage for the most recent versions of Rails
