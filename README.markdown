@@ -64,3 +64,5 @@ Conditions added by [Pat Nakajima](http://github.com/nakajima/permalink_fu/).
 [Henrik Nyh](http://github.com/technoweenie/permalink_fu/) replaced `iconv` with `ActiveSupport::Multibyte`.
 
 [Gonçalo Silva](http://goncalossilva.com) fixed `ActiveSupport::Multibyte` usage for the most recent versions of Rails.
+
+[Gonçalo Silva](http://goncalossilva.com) replaced the `ActiveSupport::Multibyte` usage for unidecode's convertion algorithm to support Ruby 1.9.

@@ -1,17 +1,16 @@
-begin
-  require "active_support"
-rescue LoadError
-  require "rubygems"
-  require "active_support"
-end
+# coding: UTF-8
+
+require "yaml"
 
 module PermalinkFu
+  # Contains Unicode codepoints, loading as needed from YAML files
+  CODEPOINTS = Hash.new { |h, k|
+    h[k] = YAML::load_file(File.join(File.dirname(__FILE__), "data", "#{k}.yml"))
+  }
 
   def self.escape(str)
-    s = str.mb_chars.downcase.strip.normalize(:kd)
+    s = self.decode(str.force_encoding("UTF-8").mb_chars.downcase.strip)
     s.gsub!(/[^\w -]+/n, '')  # strip unwanted characters
-    s.strip! # ohh la la
-    s.downcase!
     s.gsub!(/[ -]+/, '-')  # separate by single dashes
     s
   end
@@ -22,6 +21,16 @@ module PermalinkFu
       attr_accessor :permalink_options
       attr_accessor :permalink_attributes
       attr_accessor :permalink_field
+    end
+  end
+  
+  def self.decode(string)
+    string.gsub(/[^\x00-\x7f]/u) do |codepoint|
+      begin
+        CODEPOINTS["x%02x" % (codepoint.unpack("U")[0] >> 8)][codepoint.unpack("U")[0] & 255]
+      rescue
+        "_"
+      end
     end
   end
   
