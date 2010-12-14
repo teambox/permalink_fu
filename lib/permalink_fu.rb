@@ -1,5 +1,5 @@
 require 'yaml'
-require 'digest/sha1'
+require 'iconv'
 
 module PermalinkFu
   def has_permalink(attr_names = [], permalink_field = nil, options = {})
@@ -18,14 +18,15 @@ module PermalinkFu
 
   class << self
     # This method does the actual permalink escaping.
-    def escape(str)
+    def escape(str, klass = nil)
       s = ClassMethods.decode(str)#.force_encoding("UTF-8")
-      s.gsub!(/[^\x00-\x7F]+/, '') # Remove anything non-ASCII entirely (e.g. diacritics).
+      s = Iconv.iconv('ascii//ignore//translit', 'utf-8', s).to_s
       s.gsub!(/[^\w_ \-]+/i,   '') # Remove unwanted chars.
       s.gsub!(/[ \-]+/i,      '-') # No more than one of the separator in a row.
       s.gsub!(/^\-|\-$/i,      '') # Remove leading/trailing separator.
       s.downcase!
-      s.size == 0 ? ClassMethods.random_permalink(str) : s
+      s = "#{klass}-#{s}" if klass && Integer(s) rescue s
+      s.size == 0 ? ClassMethods.random_permalink : s
     end
   end
 
@@ -47,8 +48,8 @@ module PermalinkFu
         end
       end
       
-      def random_permalink(seed = nil)
-        Digest::SHA1.hexdigest("#{seed}#{Time.now.to_s.split(//).sort_by {rand}}")
+      def random_permalink
+        rand(Time.now.to_i**2).to_s(36)
       end
     end
   
@@ -77,7 +78,7 @@ module PermalinkFu
       if (value = define_attribute_methods_without_permalinks) && self.permalink_field
         class_eval <<-EOV
           def #{self.permalink_field}=(new_value);
-            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value));
+            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value, self.class.to_s.downcase));
           end
         EOV
       end
