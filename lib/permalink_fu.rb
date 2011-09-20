@@ -10,7 +10,7 @@ module PermalinkFu
     ClassMethods.setup_permalink_fu_on self do
       self.permalink_attributes = Array(attr_names)
       self.permalink_field      = (permalink_field || 'permalink').to_s
-      self.permalink_options    = {:unique => true}.update(options)
+      self.permalink_options    = {:unique => true, :min_length => 1}.update(options)
     end
     
     include InstanceMethods
@@ -135,7 +135,7 @@ module PermalinkFu
 
     def create_permalink_for(attr_names)
       str = attr_names.collect { |attr_name| send(attr_name).to_s } * " "
-      str.blank? ? PermalinkFu::ClassMethods.random_permalink : str
+      (str.blank? || str.length < self.class.permalink_options[:min_length]) ? PermalinkFu::ClassMethods.random_permalink : str
     end
 
   private
