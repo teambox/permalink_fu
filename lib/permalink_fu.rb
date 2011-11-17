@@ -1,5 +1,5 @@
 require 'yaml'
-require 'iconv'
+require 'rubygems'
 
 module PermalinkFu
   def has_permalink(attr_names = [], permalink_field = nil, options = {})
@@ -19,8 +19,14 @@ module PermalinkFu
   class << self
     # This method does the actual permalink escaping.
     def escape(str, klass = nil)
-      s = ClassMethods.decode(str)#.force_encoding("UTF-8")
-      s = Iconv.iconv('ascii//ignore//translit', 'utf-8', s).to_s
+      if Gem::Version.new("#{RUBY_VERSION}") < Gem::Version.new("1.9")
+        require 'iconv'
+        s = ClassMethods.decode(str)#.force_encoding("UTF-8")
+        s = Iconv.iconv('ascii//ignore//translit', 'utf-8', s).to_s
+      else
+        s = ClassMethods.decode(str).encode("ascii")
+      end
+
       s.gsub!(/[^\w_ \-]+/i,   '') # Remove unwanted chars.
       s.gsub!(/[ \-]+/i,      '-') # No more than one of the separator in a row.
       s.gsub!(/^\-|\-$/i,      '') # Remove leading/trailing separator.
