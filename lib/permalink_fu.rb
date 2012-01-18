@@ -1,5 +1,4 @@
 require 'yaml'
-require 'rubygems'
 
 module PermalinkFu
   def has_permalink(attr_names = [], permalink_field = nil, options = {})
