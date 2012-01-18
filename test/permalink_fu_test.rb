@@ -345,4 +345,12 @@ class PermalinkFuTest < Test::Unit::TestCase
     assert s2.valid?
     assert_equal 'ack-2', s2.permalink
   end
+
+  def test_permalink_is_randomly_created_when_min_length_is_set
+    a = MinLength.create(:title => "MinL")
+    assert a.permalink.size.eql?(12)
+    a = MinLength.create(:title => "MinLe")
+    assert_equal "minle", a.permalink
+  end
+
 end

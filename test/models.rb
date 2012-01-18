@@ -124,3 +124,7 @@ end
 class MockModelExtra < ClassModel
   has_permalink [:title, :extra]
 end
+
+class MinLength < ClassModel
+  has_permalink :title, :min_length => 5
+end
