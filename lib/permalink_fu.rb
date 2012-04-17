@@ -31,7 +31,7 @@ module PermalinkFu
       s.gsub!(/^\-|\-$/i,      '') # Remove leading/trailing separator.
       s.downcase!
       s = "#{klass}-#{s}" if klass && Integer(s) rescue s
-      s.size == 0 ? ClassMethods.random_permalink : s
+      s = s.size < klass.classify.constantize.permalink_options[:min_length] ? ClassMethods.random_permalink : s
     end
   end
 
