@@ -83,7 +83,7 @@ module PermalinkFu
       if (value = define_attribute_methods_without_permalinks) && self.permalink_field
         class_eval <<-EOV
           def #{self.permalink_field}=(new_value);
-            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value, self.class.to_s.downcase));
+            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value.to_s, self.class.to_s.downcase));
           end
         EOV
       end
