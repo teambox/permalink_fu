@@ -68,12 +68,6 @@ class PermalinkFuTest < Test::Unit::TestCase
     assert_equal @m.permalink, nil
   end
 
-  def test_should_escape_permalinks
-    @@samples.each do |from, to|
-      assert_equal to, PermalinkFu.escape(from)
-    end
-  end
-
   def test_should_escape_activerecord_model
     @m = MockModel.new
     @@samples.each do |from, to|
@@ -93,6 +87,7 @@ class PermalinkFuTest < Test::Unit::TestCase
   end
 
   def test_multiple_attribute_permalink
+
     @m = MockModelExtra.new
     @@samples.each do |from, to|
       @@extra.each do |from_extra, to_extra|
@@ -107,24 +102,24 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m = MockModel.new
     @m.title = 'foo'
     assert @m.valid?
-    assert_equal 'foo-2', @m.permalink
+    assert_match /foo\-[0-9a-z]+/, @m.permalink
 
     @m.title = 'bar'
     @m.permalink = nil
     assert @m.valid?
-    assert_equal 'bar-3', @m.permalink
+    assert_match /bar\-[0-9a-z]+/, @m.permalink
   end
 
   def test_should_create_unique_permalink_when_assigned_directly
     @m = MockModel.new
     @m.permalink = 'foo'
     assert @m.valid?
-    assert_equal 'foo-2', @m.permalink
+    assert_match /foo\-[0-9a-z]+/, @m.permalink
 
     # should always check itself for uniqueness when not respond_to?(:permalink_changed?)
     @m.permalink = 'bar'
     assert @m.valid?
-    assert_equal 'bar-3', @m.permalink
+    assert_match /bar\-[0-9a-z]+/, @m.permalink
   end
 
   def test_should_common_permalink_if_unique_is_false
@@ -150,7 +145,7 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m.permalink_will_change!
     @m.permalink = 'foo'
     assert @m.valid?
-    assert_equal 'foo-2', @m.permalink
+    assert_match /foo\-[0-9a-z]+/, @m.permalink
   end
 
   def test_should_not_check_itself_for_unique_permalink_if_permalink_field_not_changed
@@ -164,7 +159,7 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m = ScopedModel.new
     @m.permalink = 'foo'
     assert @m.valid?
-    assert_equal 'foo-2', @m.permalink
+    assert_match /foo\-[0-9a-z]+/, @m.permalink
 
     @m.foo = 5
     @m.permalink = 'foo'
@@ -189,7 +184,8 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m   = MockModel.new
     @m.title = 'foo'
     assert @m.valid?
-    assert_equal 'f-2', @m.permalink
+    #require "pry"; binding.pry
+    assert_match /[0-9a-z]+/, @m.permalink
   ensure
     MockModel.columns_hash['permalink'].instance_variable_set(:@limit, @old)
   end
@@ -339,11 +335,12 @@ class PermalinkFuTest < Test::Unit::TestCase
     assert s1.valid?
     assert_equal 'ack', s1.permalink
 
+
     s2 = ScopedModelForNilScope.new
     s2.title = 'ack'
     s2.foo = nil
     assert s2.valid?
-    assert_equal 'ack-2', s2.permalink
+    assert_match /ack-[0-9a-z]+/, s2.permalink
   end
 
   def test_permalink_is_randomly_created_when_min_length_is_set
