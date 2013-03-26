@@ -134,7 +134,6 @@ module PermalinkFu
         length = 5
         randon_string = rand(36**length - 36**(length-1)).to_s(36)
         suffix = "-#{randon_string}"
-        #suffix = "-#{counter += 1}"
         conditions[1] = "#{base[0..limit-suffix.size-1]}#{suffix}"
         send("#{self.class.permalink_field}=", conditions[1])
       end
