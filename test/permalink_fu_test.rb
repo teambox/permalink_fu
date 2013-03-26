@@ -184,7 +184,6 @@ class PermalinkFuTest < Test::Unit::TestCase
     @m   = MockModel.new
     @m.title = 'foo'
     assert @m.valid?
-    #require "pry"; binding.pry
     assert_match /[0-9a-z]+/, @m.permalink
   ensure
     MockModel.columns_hash['permalink'].instance_variable_set(:@limit, @old)
