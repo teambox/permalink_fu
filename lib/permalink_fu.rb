@@ -132,8 +132,8 @@ module PermalinkFu
       end
       while self.class.exists?(conditions)
         length = 5
-        randon_string = rand(36**length - 36**(length-1)).to_s(36)
-        suffix = "-#{randon_string}"
+        random_string = rand(36**length - 36**(length-1)).to_s(36)
+        suffix = "-#{random_string}"
         conditions[1] = "#{base[0..limit-suffix.size-1]}#{suffix}"
         send("#{self.class.permalink_field}=", conditions[1])
       end
