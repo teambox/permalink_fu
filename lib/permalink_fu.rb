@@ -11,7 +11,7 @@ module PermalinkFu
       self.permalink_field      = (permalink_field || 'permalink').to_s
       self.permalink_options    = {:unique => true, :min_length => 1}.update(options)
     end
-    
+
     include InstanceMethods
   end
 
@@ -25,7 +25,6 @@ module PermalinkFu
       else
         s = ClassMethods.decode(str).encode("ascii")
       end
-
       s.gsub!(/[^\w_ \-]+/i,   '') # Remove unwanted chars.
       s.gsub!(/[ \-]+/i,      '-') # No more than one of the separator in a row.
       s.gsub!(/^\-|\-$/i,      '') # Remove leading/trailing separator.
@@ -41,7 +40,7 @@ module PermalinkFu
     CODEPOINTS = Hash.new { |h, k|
       h[k] = YAML::load_file(File.join(File.dirname(__FILE__), "data", "#{k}.yml"))
     }
-    
+
     class << self
       def decode(string)
         string.gsub(/[^\x00-\x7f]/u) do |codepoint|
@@ -52,12 +51,12 @@ module PermalinkFu
           end
         end
       end
-      
+
       def random_permalink
         rand(Time.now.to_i**2).to_s(36)
       end
     end
-  
+
     def self.setup_permalink_fu_on(base)
       base.extend self
       class << base
@@ -83,7 +82,7 @@ module PermalinkFu
       if (value = define_attribute_methods_without_permalinks) && self.permalink_field
         class_eval <<-EOV
           def #{self.permalink_field}=(new_value);
-            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value.to_s, self.class.to_s.downcase));
+            write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value.to_s, self.class.to_s));
           end
         EOV
       end
@@ -132,7 +131,9 @@ module PermalinkFu
         end
       end
       while self.class.exists?(conditions)
-        suffix = "-#{counter += 1}"
+        length = 5
+        random_string = rand(36**length - 36**(length-1)).to_s(36)
+        suffix = "-#{random_string}"
         conditions[1] = "#{base[0..limit-suffix.size-1]}#{suffix}"
         send("#{self.class.permalink_field}=", conditions[1])
       end
