@@ -29,7 +29,7 @@ module PermalinkFu
       s.gsub!(/[ \-]+/i,      '-') # No more than one of the separator in a row.
       s.gsub!(/^\-|\-$/i,      '') # Remove leading/trailing separator.
       s.downcase!
-      s = "#{klass}-#{s}" if klass && Integer(s) rescue s
+      s = "#{klass}-#{s}" if klass && s.match(/\A\d+\z/)
       s = s.size < klass.classify.constantize.permalink_options[:min_length] ? ClassMethods.random_permalink : s
     end
   end
