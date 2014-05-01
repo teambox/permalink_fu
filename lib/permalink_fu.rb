@@ -131,9 +131,7 @@ module PermalinkFu
         end
       end
       while self.class.exists?(conditions)
-        length = 5
-        random_string = rand(36**length - 36**(length-1)).to_s(36)
-        suffix = "-#{random_string}"
+        suffix = "-".concat(SecureRandom.hex(3))
         conditions[1] = "#{base[0..limit-suffix.size-1]}#{suffix}"
         send("#{self.class.permalink_field}=", conditions[1])
       end
